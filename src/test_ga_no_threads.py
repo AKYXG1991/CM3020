@@ -25,7 +25,7 @@ class TestGA(unittest.TestCase):
             for cr in pop.creatures:
                 sim.run_creature(cr, 2400)            
             #sim.eval_population(pop, 2400)
-            fits = [cr.get_distance_travelled() 
+            fits = [cr.get_height_climbed()
                     for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) 
                     for cr in pop.creatures]
@@ -49,7 +49,7 @@ class TestGA(unittest.TestCase):
             # elitism
             max_fit = np.max(fits)
             for cr in pop.creatures:
-                if cr.get_distance_travelled() == max_fit:
+                if cr.get_height_climbed() == max_fit:
                     new_cr = creature.Creature(1)
                     new_cr.update_dna(cr.dna)
                     new_creatures[0] = new_cr
