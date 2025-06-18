@@ -9,6 +9,7 @@ import population
 import simulation
 import genome
 import creature
+import pybullet as p
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -101,6 +102,10 @@ class TestGA(unittest.TestCase):
                 plt.savefig(
                     f"ga_fitness_{pop_size}_{gene_count}.png")
                 plt.close()
+
+                # close the simulation to ensure the next combination
+                # starts with a fresh physics instance
+                p.disconnect(sim.physicsClientId)
 
                 all_records.extend(records)
 
