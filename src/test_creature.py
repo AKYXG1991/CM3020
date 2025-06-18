@@ -46,13 +46,13 @@ class TestCreature(unittest.TestCase):
         m.get_output()     
         self.assertGreater(m.get_output(), 0)
     
-    def testDist(self):
+    def testHeight(self):
         c = creature.Creature(3)
         c.update_position((0, 0, 0))
-        d1 = c.get_distance_travelled()
-        c.update_position((1, 1, 1))
-        d2 = c.get_distance_travelled()
-        self.assertGreater(d2, d1)
+        h1 = c.get_height_climbed()
+        c.update_position((1, 1, 2))
+        h2 = c.get_height_climbed()
+        self.assertGreater(h2, h1)
         
 
 unittest.main()
