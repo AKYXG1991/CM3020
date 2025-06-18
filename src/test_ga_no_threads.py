@@ -9,6 +9,7 @@ import population
 import simulation
 import genome
 import creature
+import pybullet as p
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,7 +30,9 @@ class TestGA(unittest.TestCase):
                                             use_sandbox=True)
                 records = []
 
-                for iteration in range(1000):
+                # run a smaller number of iterations so the test completes
+                # more quickly
+                for iteration in range(20):
                     for cr in pop.creatures:
                         sim.run_creature(cr, 2400)
                     fits = [cr.get_height_climbed() for cr in pop.creatures]
@@ -90,15 +93,19 @@ class TestGA(unittest.TestCase):
                     f"ga_summary_{pop_size}_{gene_count}.csv")
 
                 plt.figure()
-                plt.plot(df["fittest"], df["iteration"], label="fittest")
-                plt.plot(df["mean_fitness"], df["iteration"], label="mean")
-                plt.xlabel("fitness")
-                plt.ylabel("iteration")
+                plt.plot(df["iteration"], df["fittest"], label="fittest")
+                plt.plot(df["iteration"], df["mean_fitness"], label="mean")
+                plt.xlabel("iteration")
+                plt.ylabel("fitness")
                 plt.legend()
                 plt.tight_layout()
                 plt.savefig(
                     f"ga_fitness_{pop_size}_{gene_count}.png")
                 plt.close()
+
+                # close the simulation to ensure the next combination
+                # starts with a fresh physics instance
+                p.disconnect(sim.physicsClientId)
 
                 all_records.extend(records)
 
@@ -109,10 +116,10 @@ class TestGA(unittest.TestCase):
             for gene_count in gene_counts:
                 subset = all_df[(all_df["pop_size"] == pop_size) &
                                 (all_df["gene_count"] == gene_count)]
-                plt.plot(subset["fittest"], subset["iteration"],
+                plt.plot(subset["iteration"], subset["fittest"],
                          label=f"p{pop_size}_g{gene_count}")
-        plt.xlabel("fitness")
-        plt.ylabel("iteration")
+        plt.xlabel("iteration")
+        plt.ylabel("fitness")
         plt.legend()
         plt.tight_layout()
         plt.savefig("ga_fittest_all.png")
@@ -123,10 +130,10 @@ class TestGA(unittest.TestCase):
             for gene_count in gene_counts:
                 subset = all_df[(all_df["pop_size"] == pop_size) &
                                 (all_df["gene_count"] == gene_count)]
-                plt.plot(subset["mean_fitness"], subset["iteration"],
+                plt.plot(subset["iteration"], subset["mean_fitness"],
                          label=f"p{pop_size}_g{gene_count}")
-        plt.xlabel("fitness")
-        plt.ylabel("iteration")
+        plt.xlabel("iteration")
+        plt.ylabel("fitness")
         plt.legend()
         plt.tight_layout()
         plt.savefig("ga_mean_all.png")
