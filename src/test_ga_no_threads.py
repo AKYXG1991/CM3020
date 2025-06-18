@@ -67,8 +67,6 @@ class TestGA(unittest.TestCase):
                     new_cr = creature.Creature(1)
                     new_cr.update_dna(cr.dna)
                     new_creatures[0] = new_cr
-                    filename = "elite_"+str(iteration)+".csv"
-                    genome.Genome.to_csv(cr.dna, filename)
                     break
             
             pop.creatures = new_creatures
@@ -76,7 +74,7 @@ class TestGA(unittest.TestCase):
         df = pd.DataFrame(records)
         df.to_csv("ga_results.csv", index=False)
         summary = df.describe()
-        summary.to_csv("ga_summary.csv")
+        print(summary)
 
         plt.figure()
         plt.plot(df["iteration"], df["fittest"], label="fittest")
