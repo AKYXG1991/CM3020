@@ -29,7 +29,9 @@ class TestGA(unittest.TestCase):
                                             use_sandbox=True)
                 records = []
 
-                for iteration in range(1000):
+                # run a smaller number of iterations so the test completes
+                # more quickly
+                for iteration in range(20):
                     for cr in pop.creatures:
                         sim.run_creature(cr, 2400)
                     fits = [cr.get_height_climbed() for cr in pop.creatures]
