@@ -6,10 +6,12 @@
 
 import unittest
 import population
-import simulation 
-import genome 
-import creature 
+import simulation
+import genome
+import creature
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 class TestGA(unittest.TestCase):
     def testBasicGA(self):
@@ -17,6 +19,7 @@ class TestGA(unittest.TestCase):
                                     gene_count=3)
         #sim = simulation.ThreadedSim(pool_size=1)
         sim = simulation.Simulation()
+        records = []
 
         for iteration in range(1000):
             # this is a non-threaded version 
@@ -29,8 +32,19 @@ class TestGA(unittest.TestCase):
                     for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) 
                     for cr in pop.creatures]
-            print(iteration, "fittest:", np.round(np.max(fits), 3), 
-                  "mean:", np.round(np.mean(fits), 3), "mean links", np.round(np.mean(links)), "max links", np.round(np.max(links)))       
+            max_fit = float(np.max(fits))
+            mean_fit = float(np.mean(fits))
+            mean_link = float(np.mean(links))
+            max_link = float(np.max(links))
+            print(iteration, "fittest:", np.round(max_fit, 3),
+                  "mean:", np.round(mean_fit, 3), "mean links", np.round(mean_link), "max links", np.round(max_link))
+            records.append({
+                "iteration": iteration,
+                "fittest": max_fit,
+                "mean_fitness": mean_fit,
+                "mean_links": mean_link,
+                "max_links": max_link,
+            })
             fit_map = population.Population.get_fitness_map(fits)
             new_creatures = []
             for i in range(len(pop.creatures)):
@@ -58,7 +72,32 @@ class TestGA(unittest.TestCase):
                     break
             
             pop.creatures = new_creatures
-                            
+
+        df = pd.DataFrame(records)
+        df.to_csv("ga_results.csv", index=False)
+        summary = df.describe()
+        summary.to_csv("ga_summary.csv")
+
+        plt.figure()
+        plt.plot(df["iteration"], df["fittest"], label="fittest")
+        plt.plot(df["iteration"], df["mean_fitness"], label="mean")
+        plt.xlabel("iteration")
+        plt.ylabel("fitness")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig("ga_fitness.png")
+        plt.close()
+
+        plt.figure()
+        plt.plot(df["iteration"], df["mean_links"], label="mean links")
+        plt.plot(df["iteration"], df["max_links"], label="max links")
+        plt.xlabel("iteration")
+        plt.ylabel("links")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig("ga_links.png")
+        plt.close()
+
         self.assertNotEqual(fits[0], 0)
 
 unittest.main()
