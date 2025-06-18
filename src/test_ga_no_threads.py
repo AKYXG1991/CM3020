@@ -103,7 +103,7 @@ class TestGA(unittest.TestCase):
                 all_records.extend(records)
 
         all_df = pd.DataFrame(all_records)
-
+       
         plt.figure()
         for pop_size in pop_sizes:
             for gene_count in gene_counts:
@@ -133,7 +133,6 @@ class TestGA(unittest.TestCase):
         plt.close()
 
         self.assertTrue(len(all_records) > 0)
-
 
 if __name__ == "__main__":
     unittest.main()
